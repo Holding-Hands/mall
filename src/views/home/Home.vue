@@ -1,103 +1,21 @@
 <template>
-  <div>
-    <Swiper :SwiperList="SwiperList" class="swiper" />
-    <Recommend :recommend="recommend" />
-    <Popular />
-    <Tab :TabTitle="TabTitle" class="tab" @tabClick="tabClick" />
-    <GoodList :GoodsList="goods[CurrentIndexType].list" :imgHeight="'220px'" />
-
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>11</li>
-      <li>12</li>
-      <li>13</li>
-      <li>14</li>
-      <li>15</li>
-      <li>16</li>
-      <li>17</li>
-      <li>18</li>
-      <li>19</li>
-      <li>20</li>
-      <li>21</li>
-      <li>22</li>
-      <li>23</li>
-      <li>24</li>
-      <li>25</li>
-      <li>26</li>
-      <li>27</li>
-      <li>28</li>
-      <li>29</li>
-      <li>30</li>
-      <li>31</li>
-      <li>32</li>
-      <li>33</li>
-      <li>34</li>
-      <li>35</li>
-      <li>36</li>
-      <li>37</li>
-      <li>38</li>
-      <li>39</li>
-      <li>40</li>
-      <li>41</li>
-      <li>42</li>
-      <li>43</li>
-      <li>44</li>
-      <li>45</li>
-      <li>46</li>
-      <li>47</li>
-      <li>48</li>
-      <li>49</li>
-      <li>50</li>
-      <li>51</li>
-      <li>52</li>
-      <li>53</li>
-      <li>54</li>
-      <li>55</li>
-      <li>56</li>
-      <li>57</li>
-      <li>58</li>
-      <li>59</li>
-      <li>60</li>
-      <li>61</li>
-      <li>62</li>
-      <li>63</li>
-      <li>64</li>
-      <li>65</li>
-      <li>66</li>
-      <li>67</li>
-      <li>68</li>
-      <li>69</li>
-      <li>70</li>
-      <li>71</li>
-      <li>72</li>
-      <li>73</li>
-      <li>74</li>
-      <li>75</li>
-      <li>76</li>
-      <li>77</li>
-      <li>78</li>
-      <li>79</li>
-      <li>80</li>
-      <li>81</li>
-      <li>82</li>
-      <li>83</li>
-      <li>84</li>
-      <li>85</li>
-      <li>86</li>
-      <li>87</li>
-      <li>88</li>
-      <li>89</li>
-      <li>90</li>
-    </ul>
+  <div class="home">
+    <NavBar class="nav-bar" />
+    <better-scroll
+      class="content"
+      @scrollTo="scrollTo"
+      ref="scroll"
+      :probeType="3"
+      :pullUpLoad="true"
+      @pullingUp="loadMore"
+    >
+      <Swiper :SwiperList="SwiperList" class="swiper" />
+      <Recommend :recommend="recommend" />
+      <Popular />
+      <Tab :TabTitle="TabTitle" class="tab" @tabClick="tabClick" />
+      <GoodList :GoodsList="goods[CurrentIndexType].list" :imgHeight="'220px'" />
+    </better-scroll>
+    <back-top @click.native="clickBackTop" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -105,12 +23,20 @@
 // 导入请求首页的数据(包括轮播)
 import { getHomeSwiper, getHomeGoods } from "@/network/home";
 
+// 导入顶部导航栏NavBar
+import NavBar from "@/components/content/navBar/NavBar.vue";
+// 导入底部TabBar
+import TabBar from "@/components/content/tabBar/TabBar.vue";
 // 导入公共组件中的swiper轮播组件
 import Swiper from "components/common/swiper/Swiper";
 // 导入公共组件中的content下的选项卡Tab组件
 import Tab from "components/content/tab/Tab";
 // 导入公共组件中的content下的goods展示组件
 import GoodList from "components/content/goods/GoodsList";
+// 导入公共滑动组件Better-Scroll
+import BetterScroll from "components/common/betterScroll/BetterScroll";
+// 导入公共组件BackTop返回顶部组件
+import BackTop from "components/content/backTop/BackTop";
 
 //导入子组件childComponents
 import Recommend from "./childComponents/HomeRecommend";
@@ -128,7 +54,8 @@ export default {
         sell: { page: 0, list: [] }
       },
       // 设置tab的类型,默认pop第一次展示pop
-      CurrentIndexType: "pop"
+      CurrentIndexType: "pop",
+      isShowBackTop: false
     };
   },
   created() {
@@ -138,6 +65,10 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+    //3. 图片加载完成
+    this.$bus.$on('imgLoad',()=>{
+      this.$refs.scroll&&this.$refs.scroll.scroll.refresh();
+    })
   },
   methods: {
     //1. 将获取首页轮播与推荐数据封装成方法
@@ -156,8 +87,9 @@ export default {
         this.goods[type].list.push(...res.data.data.list); //他会把res.data.data.list解析一个一个放进去如果直接push的话会把数组当成一个元素
         this.goods[type].page += 1;
       });
+      this.$refs.scroll&&this.$refs.scroll.scroll.finishPullUp();//调用一次上拉加载更多取消一次完成上拉加载，不取消的话只加载一次
     },
-    // 3. 监听Tab子组件点击哪个tabControl，发送过来的CurrentIndex
+    //3. 监听Tab子组件点击哪个tabControl，发送过来的CurrentIndex
     tabClick(index) {
       this.ConversionType(index); //根据index调用转换类型的函数
     },
@@ -168,24 +100,51 @@ export default {
           this.CurrentIndexType = "pop";
           break;
         case 1:
-          this.CurrentIndexType='new' ;
+          this.CurrentIndexType = "new";
           break;
         case 2:
           this.CurrentIndexType = "sell";
-          break; 
+          break;
       }
+    },
+    //5. 监听better-scroll滑动位置
+    scrollTo(position) {
+      const y = -position.y;
+      if (y >= 2000) {
+        this.isShowBackTop = true;
+      } else {
+        this.isShowBackTop = false;
+      }
+    },
+    //6. 监听点击backTop组件使其回到顶部
+    clickBackTop() {
+      this.$refs.scroll.scrollTo(0, -46);
+    },
+    //7. 实现上拉加载更多
+    loadMore() {
+      this.getHomeGoods(this.CurrentIndexType);
+      console.log('shanglajiazai');
+      
     }
   },
   components: {
+    NavBar,
+    TabBar,
     Swiper,
     Recommend,
     Popular,
     Tab,
-    GoodList
+    GoodList,
+    BetterScroll,
+    BackTop
   }
 };
 </script>
 <style lang="less" scoped>
+.home {
+  position: relative;
+  height: 100vh;
+}
 // NavBar是固定在顶部脱离文档流，导致下面会向上移动所以用margin-top
 .swiper {
   margin-top: 46px;
@@ -194,5 +153,14 @@ export default {
   //使用这个属性必须设置top，当距离上部分为46px,定位自动为fixed，不过better-scroll不支持这个属性且兼容不好
   position: sticky;
   top: 46px;
+}
+// 使用better-scroll必须要给高度
+.content {
+  position: absolute;
+  top: 44px;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
 }
 </style>

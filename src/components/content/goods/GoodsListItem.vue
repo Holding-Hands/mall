@@ -9,7 +9,7 @@
 			  :style="{width:itemWidth}">
 			  
 			  <!-- 图片宽度 -->
-			<img :src="item.show.img" :style="{height:imgHeight}">
+			<img :src="item.show.img" :style="{height:imgHeight}" @load="imgLoad">
 			<div class="content">
 				<P class="title" 
 				      :style="{fontSize:titleSize}"
@@ -44,6 +44,11 @@
 
 <script>
 	export default{
+		methods:{
+			imgLoad(){
+				this.$bus.$emit('imgLoad')
+			}
+		},
 		props:{
 			//循环的商品数据
 			goodsListItem:Array,

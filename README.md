@@ -43,3 +43,22 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### 制作首页本周流行组件HomePopular
 
 ### 制作首页选项卡组件Tab
+
+### 使用Better-Scroll 注意坑 
+父组件要设置定位与height：100vh;Better-Scroll要设置绝对定位与高度
+.home {
+  position: relative;
+  height: 100vh;
+}
+// 使用better-scroll必须要给高度
+.content {
+  position: absolute;
+  top: 44px;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+### 回到顶部方法点击直接调用better-scroll里的scrollTo方法
+

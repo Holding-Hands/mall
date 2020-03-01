@@ -5,6 +5,9 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+// 添加事件总线以便兄弟组件之间传值
+Vue.prototype.$bus=new Vue
+
 new Vue({
   router,
   store,
