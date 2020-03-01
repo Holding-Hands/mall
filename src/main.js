@@ -7,7 +7,8 @@ Vue.config.productionTip = false
 
 // 添加事件总线以便兄弟组件之间传值
 Vue.prototype.$bus=new Vue
-
+//引入animate.css
+import animate from 'animate.css'
 new Vue({
   router,
   store,

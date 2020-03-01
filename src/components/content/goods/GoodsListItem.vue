@@ -9,7 +9,7 @@
 			  :style="{width:itemWidth}">
 			  
 			  <!-- 图片宽度 -->
-			<img :src="item.show.img" :style="{height:imgHeight}" @load="imgLoad">
+			<img :src="item.show.img" :style="{height:imgHeight}" @load="imgLoad" @click="clickImg(item.iid)">
 			<div class="content">
 				<P class="title" 
 				      :style="{fontSize:titleSize}"
@@ -47,6 +47,17 @@
 		methods:{
 			imgLoad(){
 				this.$bus.$emit('imgLoad')
+			},
+			clickImg(iid){
+				// 第一种方案
+				this.$router.push('/detail/'+iid)
+				// 第二种方案
+				// this.$router.push({
+				// 	path:'/detail',
+				// 	query:{
+				// 		iid:iid
+				// 	}
+				// })
 			}
 		},
 		props:{

@@ -1,7 +1,7 @@
 <template>
   <swiper :options="swiperOption" class="swiper">
     <swiper-slide  v-for="(item,index) in SwiperList" :key='index'>
-        <img :src="item.image" alt="" class="slider-img" @load="imgLoad">
+        <img :src="item" alt="" class="slider-img" @load="imgLoad">
     </swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
   </swiper>
@@ -54,7 +54,7 @@ export default {
 <style lang="less" scoped>
 
 .swiper{
-    height: 200px;
+    height: 250px;
 }
 // 样式穿透轮播图改变选中的按钮颜色
 .swiper-pagination /deep/ .swiper-pagination-bullet-active{

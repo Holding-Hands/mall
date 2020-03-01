@@ -34,9 +34,12 @@
         pullUpLoad:this.pullUpLoad,//是否下拉加载
       });
       //2.监听滑动位置
-      this.scroll.on('scroll',(position)=>{
+      if(this.probeType===2||this.probeType===3){
+        this.scroll.on('scroll',(position)=>{
         this.$emit('scrollTo',position)
       });
+      }
+      
       //3.监听上拉加载事件
       this.scroll.on('pullingUp',()=>{
        this.$emit('pullingUp')

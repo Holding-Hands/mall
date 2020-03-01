@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <NavBar class="nav-bar" />
+    <Tab :TabTitle="TabTitle" class="tab1" @tabClick="tabClick" ref="tab1" v-show="isShowTab1" />
     <better-scroll
       class="content"
       @scrollTo="scrollTo"
@@ -9,10 +10,10 @@
       :pullUpLoad="true"
       @pullingUp="loadMore"
     >
-      <Swiper :SwiperList="SwiperList" class="swiper" />
+      <Swiper :SwiperList="SwiperList" class="swiper" @swiperImgLoaded="swiperImgLoaded" />
       <Recommend :recommend="recommend" />
       <Popular />
-      <Tab :TabTitle="TabTitle" class="tab" @tabClick="tabClick" />
+      <Tab :TabTitle="TabTitle" class="tab" @tabClick="tabClick" ref="tab2" />
       <GoodList :GoodsList="goods[CurrentIndexType].list" :imgHeight="'220px'" />
     </better-scroll>
     <back-top @click.native="clickBackTop" v-show="isShowBackTop" />
@@ -20,6 +21,9 @@
 </template>
 
 <script>
+// 导入防抖函数
+import { debounce } from "common/tools";
+
 // 导入请求首页的数据(包括轮播)
 import { getHomeSwiper, getHomeGoods } from "@/network/home";
 
@@ -49,13 +53,15 @@ export default {
       recommend: [],
       TabTitle: ["流行", "新款", "精选"],
       goods: {
-        pop: { page: 0, list: [] },
-        new: { page: 0, list: [] },
-        sell: { page: 0, list: [] }
+        pop: { page: 0, list: [], isClick: true,y:0 },
+        new: { page: 0, list: [], isClick: false ,y:0 },
+        sell: { page: 0, list: [], isClick: false ,y:0 }
       },
       // 设置tab的类型,默认pop第一次展示pop
       CurrentIndexType: "pop",
-      isShowBackTop: false
+      isShowBackTop: false,
+      tabOffSetTop: 0,
+      isShowTab1: false
     };
   },
   created() {
@@ -65,10 +71,13 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
-    //3. 图片加载完成
-    this.$bus.$on('imgLoad',()=>{
-      this.$refs.scroll&&this.$refs.scroll.scroll.refresh();
-    })
+  },
+  mounted() {
+    //1. 监听商品goods图片加载完成，防抖重新刷新滚动高度
+    const refresh = debounce(this.$refs.scroll.refresh, 300);
+    this.$bus.$on("imgLoad", () => {
+      refresh();
+    });
   },
   methods: {
     //1. 将获取首页轮播与推荐数据封装成方法
@@ -87,7 +96,7 @@ export default {
         this.goods[type].list.push(...res.data.data.list); //他会把res.data.data.list解析一个一个放进去如果直接push的话会把数组当成一个元素
         this.goods[type].page += 1;
       });
-      this.$refs.scroll&&this.$refs.scroll.scroll.finishPullUp();//调用一次上拉加载更多取消一次完成上拉加载，不取消的话只加载一次
+      this.$refs.scroll && this.$refs.scroll.scroll.finishPullUp(); //调用一次上拉加载更多取消一次完成上拉加载，不取消的话只加载一次
     },
     //3. 监听Tab子组件点击哪个tabControl，发送过来的CurrentIndex
     tabClick(index) {
@@ -98,14 +107,24 @@ export default {
       switch (index) {
         case 0:
           this.CurrentIndexType = "pop";
+          //调用是否点击事件，如果点击过则回到原来位置，没点击回到顶部
+          this.isClick();
+          this.goods[this.CurrentIndexType].isClick = true;
           break;
         case 1:
           this.CurrentIndexType = "new";
+          this.isClick();
+          this.goods[this.CurrentIndexType].isClick = true;
           break;
         case 2:
           this.CurrentIndexType = "sell";
+          this.isClick();
+          this.goods[this.CurrentIndexType].isClick = true;
           break;
       }
+      // 因为两个Tab组件index不一样，所以要使其变成一样的
+      this.$refs.tab1.CurrentIndex = index;
+      this.$refs.tab2.CurrentIndex = index;
     },
     //5. 监听better-scroll滑动位置
     scrollTo(position) {
@@ -115,6 +134,10 @@ export default {
       } else {
         this.isShowBackTop = false;
       }
+      this.goods[this.CurrentIndexType].y=-y;
+      
+      // console.log(y);//这里的y默认-46导航的高度，不知道为啥，所以不能写等于
+      this.isShowTab1 = y > this.tabOffSetTop + 46; //为什么加46因为我测试的时候会有问题，所以加上导航组件的高度
     },
     //6. 监听点击backTop组件使其回到顶部
     clickBackTop() {
@@ -123,8 +146,19 @@ export default {
     //7. 实现上拉加载更多
     loadMore() {
       this.getHomeGoods(this.CurrentIndexType);
-      console.log('shanglajiazai');
-      
+    },
+    //8. 监听swiper组件图片加载完成，然后获取Tab组件的offSetTop值
+    swiperImgLoaded() {
+      this.tabOffSetTop = this.$refs.tab2.$el.offsetTop;
+      console.log(this.tabOffSetTop);
+    },
+    //9. 监听Tab之前是否有点击过，如果没有则跳转到Tab顶部，有则跳到原来位置
+    isClick(x=0,y=-this.tabOffSetTop - 46,time=100) {
+      if (this.goods[this.CurrentIndexType].isClick === false) {
+        this.$refs.scroll.scroll.scrollTo(x, y,time);
+      }else{
+        this.$refs.scroll.scroll.scrollTo(x, this.goods[this.CurrentIndexType].y,time);
+      }
     }
   },
   components: {
@@ -149,18 +183,18 @@ export default {
 .swiper {
   margin-top: 46px;
 }
-.tab {
-  //使用这个属性必须设置top，当距离上部分为46px,定位自动为fixed，不过better-scroll不支持这个属性且兼容不好
-  position: sticky;
-  top: 46px;
-}
 // 使用better-scroll必须要给高度
 .content {
   position: absolute;
-  top: 44px;
+  top: 46px;
   bottom: 50px;
   left: 0;
   right: 0;
   overflow: hidden;
+}
+.tab1 {
+  // margin-top: 46px;
+  position: relative;
+  z-index: 9;
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <TabBar />
-    <router-view />
+    <keep-alive exclude="Detail">
+      <router-view />
+    </keep-alive>
   </div>
 </template>
 <script>
@@ -17,5 +19,4 @@ export default {
 @import "assets/css/normalize.css";
 @import "assets/css/base.css";
 @import "assets/iconfont/iconfont.css";
-
 </style>

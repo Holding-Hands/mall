@@ -24,6 +24,7 @@ export default {
     methods:{
         changeCurrentIndex(index){
             this.CurrentIndex=index;
+            // 这里穿index和CurrentIndex都可以
             this.$emit('tabClick',index);
         }
     }

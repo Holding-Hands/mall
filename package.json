@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --open --hot",
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "animate.css": "^3.7.2",
     "axios": "^0.19.2",
     "better-scroll": "^1.15.2",
     "core-js": "^3.6.4",

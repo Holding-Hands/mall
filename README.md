@@ -62,3 +62,74 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### 回到顶部方法点击直接调用better-scroll里的scrollTo方法
 
+### 使用防抖函数
+const refresh =debounce (this.$refs.scroll.refresh,500);
+    this.$bus.$on('imgLoad',()=>{
+      refresh();
+    })
+
+### c3固定顶部
+.tab {
+  //使用这个属性必须设置top，当距离上部分为46px,定位自动为fixed，不过better-scroll不支持这个属性且兼容不好
+  position: sticky;
+  top: 46px;
+}
+
+### 制作TabCeiling吸顶效果
+## 思路
+# 必须知道滚动到多少时开始有吸顶效果
+# 获取Tab组件的offsettop，但是组件没有offSetTop值，好消息是所有组件都有个属性是$el，用于获取组件的元素$el.offsetTop就可以获取值了(s是小写的，我踩的坑)
+# 注意的问题，获取offSetTop的时候可能不包含图片，所以要监听图片加载完成之后在获取
+
+### 使用betterscroll的时候导航navbar不需要固定fixed
+
+### 让Home保持原来的状态不要随意销毁 keep-alive
+
+### 增加需求，如果未点击过的直接跳转到Tab组件顶部
+
+### 设置动态路由两种方案
+# // 第一种方案
+this.$router.push('/detail/'+iid)
+# // 第二种方案
+this.$router.push({
+  path:'/detail',
+  query:{
+    id:iid
+  }
+})
+}
+## params参数需要动态路由方式传递参数
+  {
+    path:'/detail/:iid',
+    name: 'Detail',
+    component:Detail
+  }
+# 带路由参数params时，路由里的path应该写成:  path:'/apple/:color' 
+## query参数需要动态路由方式传递参数
+  {
+    path:'/detail/',
+    name: 'Detail',
+    component:Detail
+  }
+# 带查询参数query时，路由里的path应该写成: path:'/apple' 
+
+  # 获取params路由参数
+  在组件中：  {{$route.params.color}}
+  在js里： this.$route.params.color
+  # 获取query路由参数
+  在组件中：  {{$route.query.color}}
+  在js里： this.$route.query.color
+
+  ### 引入动画
+  npm install animate.css --save
+  import animate from 'animate.css'
+   <transition
+      enter-active-class="animated fadeInDown"
+      leave-active-class="animated fadeOutUp">
+    包裹动画元素
+  </transition>
+
+  ### 因为每次加载的商品都是不一样的，所以要用，防止不初始化数据
+  <keep-alive exclude="Detail">
+      <router-view />
+    </keep-alive>

@@ -19,7 +19,7 @@ Vue.use(Icon).use(NavBar);
 export default {
   data(){
     return {
-      isFixed:true
+    
     }
   },
   props: {
@@ -44,6 +44,10 @@ export default {
     border: {
       type: Boolean,
       default: false
+    },
+    isFixed:{
+      type:Boolean,
+      default:false
     }
   }
 };
