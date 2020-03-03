@@ -39,8 +39,9 @@ import Tab from "components/content/tab/Tab";
 import GoodList from "components/content/goods/GoodsList";
 // 导入公共滑动组件Better-Scroll
 import BetterScroll from "components/common/betterScroll/BetterScroll";
-// 导入公共组件BackTop返回顶部组件
-import BackTop from "components/content/backTop/BackTop";
+
+//导入混入组件的返回顶部
+import {mixinBackTop} from 'common/mixins'
 
 //导入子组件childComponents
 import Recommend from "./childComponents/HomeRecommend";
@@ -59,14 +60,14 @@ export default {
       },
       // 设置tab的类型,默认pop第一次展示pop
       CurrentIndexType: "pop",
-      isShowBackTop: false,
       tabOffSetTop: 0,
-      isShowTab1: false
+      isShowTab1: false,
     };
   },
   created() {
     //1. 获取首页轮播与推荐数据
     this.getHomeSwiper();
+
     //2. 获取首页商品goods数据
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
@@ -150,7 +151,6 @@ export default {
     //8. 监听swiper组件图片加载完成，然后获取Tab组件的offSetTop值
     swiperImgLoaded() {
       this.tabOffSetTop = this.$refs.tab2.$el.offsetTop;
-      console.log(this.tabOffSetTop);
     },
     //9. 监听Tab之前是否有点击过，如果没有则跳转到Tab顶部，有则跳到原来位置
     isClick(x=0,y=-this.tabOffSetTop - 46,time=100) {
@@ -170,8 +170,8 @@ export default {
     Tab,
     GoodList,
     BetterScroll,
-    BackTop
-  }
+  },
+   mixins:[mixinBackTop]
 };
 </script>
 <style lang="less" scoped>

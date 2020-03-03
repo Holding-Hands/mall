@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import GoodListItem from './GoodsListItem.vue'
+	import GoodListItem from './DetailGoodsListItem.vue'
 	
 	export default{
 		components:{
@@ -17,7 +17,7 @@
 			imgHeight:String,
 			oldPriceSize:String,
 			newPriceSize:String,
-			titleSize:String,
+			titleSize:String
 		}
 	}
 	

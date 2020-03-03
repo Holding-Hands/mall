@@ -133,3 +133,26 @@ this.$router.push({
   <keep-alive exclude="Detail">
       <router-view />
     </keep-alive>
+
+
+#### 由于重复使用某一个组件，所以需要取消监听商品goods图片加载完成，防抖重新刷新滚动高度
+    const refresh = debounce(this.$refs.scroll.refresh, 300);
+    this.imgLister = () => {refresh()}
+    this.$bus.$on("imgLoad",this.imgLister );
+
+      deactivated(){
+    //离开这个组件的时候取消全局监听
+    // this.$bus.$off(this.imgLister)传一个监听的函数 
+  }
+
+  也可以用第二种方法
+  imgLoad(){
+  // this.$bus.$emit('imgLoad')
+  //根据不同的路由发送不同页面的
+  if(this.$route.path.indexOf('/home')){
+      this.$bus.$emit('imgLoad')
+  }else if(this.$route.path.indexOf('/detail')){
+      this.$bus.$emit('imgLoad')
+  }
+},
+### 将各个组件公共的代码比如BackTop组件采用mixins混入。

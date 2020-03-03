@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="nav-bar">
     <transition
       enter-active-class="animated fadeInDown"
       leave-active-class="animated fadeOutUp"
@@ -71,6 +71,10 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.nav-bar{
+  z-index: 9999;
+  position: relative;
+}
 .features {
   padding: 5px 10px;
   background-color: #969799;
@@ -113,6 +117,7 @@ export default {
   padding: 0 10px;
   background: #f2f2f2;
   padding: 8px 0;
+  z-index: 999;
 }
 .item {
   flex: 1;

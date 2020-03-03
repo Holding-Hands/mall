@@ -36,10 +36,6 @@ export default {
     swiper,
     swiperSlide
   },
-  created(){
-    console.log(this.SwiperList);
-    
-  },
     methods:{
     imgLoad(){
       if(!this.swiperImgLoaded){
