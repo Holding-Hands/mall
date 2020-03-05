@@ -156,3 +156,12 @@ this.$router.push({
   }
 },
 ### 将各个组件公共的代码比如BackTop组件采用mixins混入。
+
+### 标题和内容的联动效果
+在detail中监听Tab组件的点击获取index，滑动到相应的模块获取对应主题的offsetTop值
+问题：在哪里才能获取正确的offsetTop
+1.created里不行，获取不到元素
+2.mounted也不行，数据还没有获取到
+3.在获取到数据的回调函数中也不行，因为dom还没渲染到
+4.this.$nextTick也不行，因为图片的高度没有计算在内
+5.在图片加载完成后，获取高度

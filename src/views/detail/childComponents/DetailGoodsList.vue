@@ -1,5 +1,5 @@
 <template>
-	<div class="goods-list" v-if="GoodsList.length!==0">
+	<div class="goods-list" v-if="Object.keys(GoodsList).length!==0">
 		<good-list-item :goods-list-item="GoodsList" :ItemWidth="ItemWidth" :imgHeight="imgHeight"/>
 	</div>
 </template>

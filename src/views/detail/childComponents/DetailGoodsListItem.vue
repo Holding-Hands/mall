@@ -1,6 +1,6 @@
 <template>
 	<div class="goods-list-item" 
-	      v-if="goodsListItem.length!==0"
+	      v-show="Object.keys(goodsListItem).length!==0"
 		  :style="{flexWrap:isWrap}">
 		  <!-- 一个item的宽度 -->
 		<div class="item" 
@@ -9,7 +9,7 @@
 			  :style="{width:itemWidth}">
 			  
 			  <!-- 图片宽度 -->
-			<img :src="item.image" :style="{height:imgHeight}" @load="imgLoad" @click="clickImg(item.iid)">
+			<img :src="item.image" :style="{height:imgHeight}" @load="detailImgLoad" @click="clickImg(item.iid)">
 			<div class="content">
 				<P class="title" 
 				      :style="{fontSize:titleSize}"
@@ -45,14 +45,15 @@
 <script>
 	export default{
 		methods:{
-			imgLoad(){
+			detailImgLoad(){
                 // this.$bus.$emit('imgLoad')
                 //根据不同的路由发送不同页面的
                 if(this.$route.path.indexOf('/home')){
                     this.$bus.$emit('imgLoad')
                 }else if(this.$route.path.indexOf('/detail')){
-                    this.$bus.$emit('imgLoad')
-                }
+                    
+				}
+				this.$bus.$emit('detailImgLoad')
 			},
 			clickImg(iid){
 				// 第一种方案

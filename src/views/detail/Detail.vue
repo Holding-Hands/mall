@@ -4,26 +4,25 @@
     <DetailNavBar />
     <!-- 显示与隐藏动画显示 -->
     <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
-      <DetailTab v-show="isShowTab" class="tab" @titleClick ="titleClick" />
+      <DetailTab v-show="isShowTab" class="tab" @titleClick="titleClick" ref="tab" />
     </transition>
     <GoodsAction />
     <better-scroll class="better-scroll" ref="scroll" :probeType="3" @scrollTo="scrollTo">
       <DetailSwiper :SwiperList="swiperList" />
       <DetailBaseInfo :baseInfo="baseInfo" />
       <DetailBusinessInfo :businessInfo="businessInfo" />
-      <DetailsGoodsInfo :goodsInfo="goodsInfo" @imgLoad="imgLoad" />
-      <DetailParamInfo :paramInfo="paramInfo" />
-      <DetailsCommentInfo :commentInfo="commentInfo" />
-      <GoodsList :GoodsList="recommendList" :imgHeight="'220px'" />
+      <DetailsGoodsInfo :goodsInfo="goodsInfo" @imgLoad="detailImgLoad" />
+      <DetailParamInfo :paramInfo="paramInfo" ref="param" />
+      <DetailsCommentInfo :commentInfo="commentInfo" ref="comment" />
+      <DetailGoodsList :GoodsList="recommendList" :imgHeight="'220px'" ref="recommend" />
     </better-scroll>
     <back-top @click.native="clickBackTop" v-show="isShowBackTop" />
   </div>
 </template>
 
 <script>
-
 //导入工具防抖函数
-import {debounce} from 'common/tools'
+import { debounce } from "common/tools";
 
 //导入请求数据的函数
 import {
@@ -41,28 +40,28 @@ import NavBar from "@/components/content/navBar/NavBar.vue";
 import GoodsAction from "@/components/content/goodsAction/GoodsAction.vue";
 // 导入公共滑动组件Better-Scroll
 import BetterScroll from "components/common/betterScroll/BetterScroll";
-// 导入公共组件goodsList用来展示推荐部分
-import GoodsList from "./childComponents/DetailGoodsList";
 
 //导入混入组件的返回顶部
-import {mixinBackTop} from 'common/mixins'
+import { mixinBackTop } from "common/mixins";
 
-//导入子组件childComponents
+//1.导入子组件childComponents
 import DetailNavBar from "./childComponents/DetailNavBar";
-//导入子组件Tab选项卡
+//2.导入子组件Tab选项卡
 import DetailTab from "./childComponents/DetailTab";
-//导入子组件swiper组件
+//3.导入子组件swiper组件
 import DetailSwiper from "./childComponents/DetailSwiper";
-//导入子组件商品BaseInfo(基本信息)组件
+//4.导入子组件商品BaseInfo(基本信息)组件
 import DetailBaseInfo from "./childComponents/DetailBaseInfo";
-//导入子组件BusinessInfo(商家信息)组件
+//5.导入子组件BusinessInfo(商家信息)组件
 import DetailBusinessInfo from "./childComponents/DetailBusinessInfo";
-//导入子组件DetailsGoodsInfo(详细信息)组件
+//6.导入子组件DetailsGoodsInfo(详细信息)组件
 import DetailsGoodsInfo from "./childComponents/DetailGoodsInfo";
-//导入子组件DetailsGoodsInfo(详细信息)组件
+//7.导入子组件DetailParamInfo参数信息组件
 import DetailParamInfo from "./childComponents/DetailParamInfo";
-//导入子组件DetailsCommentInfo(详细信息)组件
+//8.导入子组件DetailsCommentInfo评论信息组件
 import DetailsCommentInfo from "./childComponents/DetailCommentInfo";
+//9.导入子组件goodsList用来展示推荐部分
+import DetailGoodsList from "./childComponents/DetailGoodsList";
 
 export default {
   name: "Detail",
@@ -85,6 +84,12 @@ export default {
       commentInfo: {},
       //推荐列表数据
       recommendList: [],
+      //定义一个组件距离顶部的数组
+      topY: [],
+      //定义一个获取组件Y值的函数，然后created里初始化这个函数，在图片加载完成防抖调用这恶鬼函数
+      getTopY: null,
+      saveY: 0,
+      currentIndex:0
     };
   },
   created() {
@@ -108,7 +113,7 @@ export default {
       //5.获取BusinessInfo商家基本信息并传给子组件
       this.businessInfo = new BusinessInfo(data.shopInfo);
 
-      //6.获取商品详细信息，传递个子组件
+      //6.获取商品详细信息,传递个子组件
       this.goodsInfo = data.detailInfo;
 
       //7.获取商品的参数信息paramInfo
@@ -146,24 +151,53 @@ export default {
         this.isShowTab = false;
       }
       //2. 根据距离改变isShowBackTop的值决定是否显示与隐藏BackTop
-       if (y >= 2000) {
+      if (y >= 2000) {
         this.isShowBackTop = true;
       } else {
         this.isShowBackTop = false;
       }
+      //3. 根据距离改变Tab中currentIndex的值
+      for (let i = 0; i < this.topY.length-1 ; i++) {
+        if (
+          i < this.topY.length - 1 &&
+            y >= this.topY[i] &&
+            y < this.topY[i + 1])
+         {
+          this.currentIndex = i;
+          this.$refs.tab.currentIndex = this.currentIndex;
+        }
+      }
     },
     //2. 监听goodsInfo图片加载完成好发送
-    imgLoad() {
+    detailImgLoad() {
       this.$refs.scroll.refresh(); //图片监听完成好刷新滚动高度
     },
     //3. 监听点击backTop组件使其回到顶部
     clickBackTop() {
       this.$refs.scroll.scrollTo(0, 0);
     },
-    //4. 监听Tab组件点击获取下标值
-    titleClick(index){
+    //4. 监听Tab组件点击获取下标值,并且跳转到相应组件的位置
+    titleClick(index) {
+      this.$refs.scroll.scrollTo(0, -this.topY[index]);
       console.log(index);
     }
+  },
+  updated() {
+    debounce(() => {
+      this.topY = [];
+      this.topY.push(0);
+      this.topY.push(this.$refs.param.$el.offsetTop - 42.8);
+      this.topY.push(this.$refs.comment.$el.offsetTop - 42.8);
+      this.topY.push(this.$refs.recommend.$el.offsetTop - 42.8);
+      this.topY.push(Number.MAX_VALUE)  //最大值
+    }, 200)();
+  },
+  activated() {
+    this.$refs.scroll.refresh(); //进入home组件再次刷新一次，防止自己回到顶部bug
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.saveScrollY();
   },
   components: {
     NavBar,
@@ -177,9 +211,9 @@ export default {
     DetailsGoodsInfo,
     DetailParamInfo,
     DetailsCommentInfo,
-    GoodsList,
+    DetailGoodsList
   },
-  mixins:[mixinBackTop]
+  mixins: [mixinBackTop]
 };
 </script>
 

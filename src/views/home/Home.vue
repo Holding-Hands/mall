@@ -41,7 +41,7 @@ import GoodList from "components/content/goods/GoodsList";
 import BetterScroll from "components/common/betterScroll/BetterScroll";
 
 //导入混入组件的返回顶部
-import {mixinBackTop} from 'common/mixins'
+import { mixinBackTop } from "common/mixins";
 
 //导入子组件childComponents
 import Recommend from "./childComponents/HomeRecommend";
@@ -54,14 +54,15 @@ export default {
       recommend: [],
       TabTitle: ["流行", "新款", "精选"],
       goods: {
-        pop: { page: 0, list: [], isClick: true,y:0 },
-        new: { page: 0, list: [], isClick: false ,y:0 },
-        sell: { page: 0, list: [], isClick: false ,y:0 }
+        pop: { page: 0, list: [], isClick: true, y: 0 },
+        new: { page: 0, list: [], isClick: false, y: 0 },
+        sell: { page: 0, list: [], isClick: false, y: 0 }
       },
       // 设置tab的类型,默认pop第一次展示pop
       CurrentIndexType: "pop",
       tabOffSetTop: 0,
       isShowTab1: false,
+      saveY:null
     };
   },
   created() {
@@ -135,8 +136,8 @@ export default {
       } else {
         this.isShowBackTop = false;
       }
-      this.goods[this.CurrentIndexType].y=-y;
-      
+      this.goods[this.CurrentIndexType].y = -y;
+
       // console.log(y);//这里的y默认-46导航的高度，不知道为啥，所以不能写等于
       this.isShowTab1 = y > this.tabOffSetTop + 46; //为什么加46因为我测试的时候会有问题，所以加上导航组件的高度
     },
@@ -153,11 +154,15 @@ export default {
       this.tabOffSetTop = this.$refs.tab2.$el.offsetTop;
     },
     //9. 监听Tab之前是否有点击过，如果没有则跳转到Tab顶部，有则跳到原来位置
-    isClick(x=0,y=-this.tabOffSetTop - 46,time=100) {
+    isClick(x = 0, y = -this.tabOffSetTop - 46, time = 100) {
       if (this.goods[this.CurrentIndexType].isClick === false) {
-        this.$refs.scroll.scroll.scrollTo(x, y,time);
-      }else{
-        this.$refs.scroll.scroll.scrollTo(x, this.goods[this.CurrentIndexType].y,time);
+        this.$refs.scroll.scroll.scrollTo(x, y, time);
+      } else {
+        this.$refs.scroll.scroll.scrollTo(
+          x,
+          this.goods[this.CurrentIndexType].y,
+          time
+        );
       }
     }
   },
@@ -169,9 +174,16 @@ export default {
     Popular,
     Tab,
     GoodList,
-    BetterScroll,
+    BetterScroll
   },
-   mixins:[mixinBackTop]
+  mixins: [mixinBackTop],
+  activated() {
+    // this.$refs.scroll.refresh(); //进入home组件再次刷新一次，防止自己回到顶部bug
+    // this.$refs.scroll.scrollTo(0, this.saveY, 0);
+  },
+  deactivated() {
+    // this.saveY = this.$refs.scroll.saveScrollY();
+  }
 };
 </script>
 <style lang="less" scoped>
