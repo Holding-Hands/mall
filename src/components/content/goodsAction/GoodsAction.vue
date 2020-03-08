@@ -43,12 +43,15 @@ export default {
     //2.根据是否点击star星星改变颜色，文字，状态
     clickStar() {
       this.isClickStar = !this.isClickStar;
+      if(this.isClickStar){
+        this.$toast('宝贝已收藏');
+      }else{
+        this.$toast('已取消收藏');
+      }
     },
     //3.加入购物车点击事件
-    addCart() {},
-    //4.弹出层方法
-    showPopup() {
-      this.show = true;
+    addCart() {
+      this.$emit('addCart')
     }
   }
 };

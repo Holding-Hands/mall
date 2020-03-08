@@ -9,7 +9,7 @@
 			  :style="{width:itemWidth}">
 			  
 			  <!-- 图片宽度 -->
-			<img :src="item.show.img" :style="{height:imgHeight}" @load="imgLoad" @click="clickImg(item.iid)">
+			<img v-lazy="item.show.img" :style="{height:imgHeight}" @load="imgLoad" @click="clickImg(item.iid)">
 			<div class="content">
 				<P class="title" 
 				      :style="{fontSize:titleSize}"

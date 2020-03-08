@@ -6,7 +6,7 @@
     <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
       <DetailTab v-show="isShowTab" class="tab" @titleClick="titleClick" ref="tab" />
     </transition>
-    <GoodsAction />
+    <GoodsAction @addCart='addCart' />
     <better-scroll class="better-scroll" ref="scroll" :probeType="3" @scrollTo="scrollTo">
       <DetailSwiper :SwiperList="swiperList" />
       <DetailBaseInfo :baseInfo="baseInfo" />
@@ -69,25 +69,36 @@ export default {
     return {
       title: "商品 参数 评论 推荐",
       iid: null,
+
       //轮播列表
       swiperList: [],
+
       //商品基本信息
       baseInfo: [],
+
       //商家信息
       businessInfo: {},
+
       isShowTab: false,
+
       //商品详细信息
       goodsInfo: {},
+
       //参数信息
       paramInfo: {},
+
       //商品评论数据
       commentInfo: {},
+
       //推荐列表数据
       recommendList: [],
+
       //定义一个组件距离顶部的数组
       topY: [],
+
       //定义一个获取组件Y值的函数，然后created里初始化这个函数，在图片加载完成防抖调用这恶鬼函数
       getTopY: null,
+
       saveY: 0,
       currentIndex:0
     };
@@ -159,12 +170,12 @@ export default {
       //3. 根据距离改变Tab中currentIndex的值
       for (let i = 0; i < this.topY.length-1 ; i++) {
         if (
-          i < this.topY.length - 1 &&
             y >= this.topY[i] &&
             y < this.topY[i + 1])
          {
-          this.currentIndex = i;
-          this.$refs.tab.currentIndex = this.currentIndex;
+          // this.currentIndex = i;
+          // this.$refs.tab.currentIndex = this.currentIndex;
+          this.$refs.tab.currentIndex =i;
         }
       }
     },
@@ -179,7 +190,23 @@ export default {
     //4. 监听Tab组件点击获取下标值,并且跳转到相应组件的位置
     titleClick(index) {
       this.$refs.scroll.scrollTo(0, -this.topY[index]);
-      console.log(index);
+    },
+    //5.监听子组件点击购物车发送的事件
+    addCart(){
+      //1.获取购物车需要展示的信息，对象的形式
+        const product = {};
+        product.image = this.swiperList[0];
+        product.title = this.baseInfo.title;
+        product.desc = this.baseInfo.desc;
+        product.price = this.baseInfo.realPrice;
+        product.iid = this.iid;
+        product.lowNowPrice = this.baseInfo.lowNowPrice;
+        product.count = 0;
+        this.$store.dispatch('addCart',product).then((res)=>{
+          this.$toast(res);
+        }).catch(res=>{
+          this.$toast(res);
+        })
     }
   },
   updated() {
@@ -187,7 +214,7 @@ export default {
       this.topY = [];
       this.topY.push(0);
       this.topY.push(this.$refs.param.$el.offsetTop - 42.8);
-      this.topY.push(this.$refs.comment.$el.offsetTop - 42.8);
+      this.topY.push((this.$refs.comment.$el.offsetTop - 42.8)||(this.$refs.recommend.$el.offsetTop - 42.8))
       this.topY.push(this.$refs.recommend.$el.offsetTop - 42.8);
       this.topY.push(Number.MAX_VALUE)  //最大值
     }, 200)();

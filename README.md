@@ -165,3 +165,52 @@ this.$router.push({
 3.在获取到数据的回调函数中也不行，因为dom还没渲染到
 4.this.$nextTick也不行，因为图片的高度没有计算在内
 5.在图片加载完成后，获取高度
+
+### import {mapGetters} from 'vuex'
+computed:{
+  ...mapGetters([]),
+  ...mapGetters({})
+}
+
+### 安装npm install postcss-px-to-viewport --save-dev  px转rem插件然后在新建个postcss.config.js
+module.exports = {
+    plugins: {
+        autoprefixer: {},
+        "postcss-px-to-viewport": {
+            viewportWidth: 375, //视口宽度，对应设计稿的宽度
+            viewportHeight: 667, //视口高度，对应设计稿的高度
+            viewportUnit: 'vw', //指定需要转换的视口单位
+            unitPrecision: 5, //指定px转换单位值的小数位数
+            selectorBlackList: [], // 指定不需要转换的类
+            minPixelValue: 1, //小于等于1px不转换视口单位
+            mediaQuery: false //允许在媒体查询中转换px
+        }
+    }
+}
+
+### 购物车页面滚动不了原因，因为添加数据better-scroll并没有重新计算滚动高度，所以要一进入card页面就需要刷新高度
+解决方案啊
+activated(){
+  this.$ref.scroll.refresh()
+}
+
+### 移动端解决300ms延迟问题
+npm install fastclick
+import FastClick from 'fastclick'
+FastClick.attach(document.body)
+
+### 使用图片懒加载
+npm i vue-lazyload -S
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload)
+
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: 'dist/error.png',
+  loading: 'dist/loading.gif',
+  attempt: 1
+})
+
+v-lazy=''
+
+### 解决购物车计算金额的问题，因为使用vant，所以在这里再添加购物车的时候默认添加一个属性为checked：false，然后点击按钮，把这个改相反的，submitBar通过计算属性为checked：true的就行了。

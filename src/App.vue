@@ -19,4 +19,7 @@ export default {
 @import "assets/css/normalize.css";
 @import "assets/css/base.css";
 @import "assets/iconfont/iconfont.css";
+#app{
+  touch-action: none; 
+}
 </style>
