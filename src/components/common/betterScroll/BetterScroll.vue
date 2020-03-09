@@ -54,6 +54,8 @@
       },
       refresh(){
         this.scroll&&this.scroll.refresh();
+        console.log('refresh调用了');
+        
       },
       saveScrollY(){
         return this.scroll?this.scroll.y:0;

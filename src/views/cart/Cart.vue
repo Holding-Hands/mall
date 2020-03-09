@@ -3,19 +3,21 @@
     <CartNavBar />
     <CartSubmitBar class="submit-bar" />
     <BetterScroll class="better-scroll" ref="scroll">
-      <!-- <CartList /> -->
       <Card />
+      <CartEmpty v-if="cartLengh===0" />
     </BetterScroll>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+
 //导入子组件NavBar头部导航栏
 import CartNavBar from "./childComponents/CartNavNar";
 //导入子组件SubmitBar提交订单组件
 import CartSubmitBar from "./childComponents/CartSubmitBar";
-//导入子组件CartList列表组件
-// import CartList from "./childComponents/CartList";
+//导入子组件CartEmpty列表组件
+import CartEmpty from "./childComponents/CartEmpty";
 //导入子组件Card列表组件
 import Card from "./childComponents/Card";
 
@@ -27,11 +29,14 @@ export default {
     CartNavBar,
     CartSubmitBar,
     BetterScroll,
-    // CartList,
+    CartEmpty,
     Card
   },
   activated() {
     this.$refs.scroll.refresh();
+  },
+  computed:{
+    ...mapGetters(['cartLengh'])
   }
 };
 </script>

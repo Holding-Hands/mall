@@ -1,6 +1,7 @@
 <template>
   <div class="home">
-    <NavBar class="nav-bar" />
+    <NavBar class="nav-bar">
+    </NavBar>
     <Tab :TabTitle="TabTitle" class="tab1" @tabClick="tabClick" ref="tab1" v-show="isShowTab1" />
     <better-scroll
       class="content"
@@ -62,7 +63,7 @@ export default {
       CurrentIndexType: "pop",
       tabOffSetTop: 0,
       isShowTab1: false,
-      saveY:null
+      saveY: null
     };
   },
   created() {

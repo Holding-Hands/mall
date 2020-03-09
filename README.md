@@ -214,3 +214,12 @@ Vue.use(VueLazyload, {
 v-lazy=''
 
 ### 解决购物车计算金额的问题，因为使用vant，所以在这里再添加购物车的时候默认添加一个属性为checked：false，然后点击按钮，把这个改相反的，submitBar通过计算属性为checked：true的就行了。
+
+### 给分类列表选择的项，加竖条
+.active {
+  background: #ffffff;
+  border-left: 3px solid var(--color-tint);
+//border-right:3px solid white ;   
+  padding-right: 3px;
+  加pading或者border都行
+  

@@ -28,6 +28,7 @@
   .right,
   .left {
     width: 60px;
+     text-align: center;
   }
 
   .center {

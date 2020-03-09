@@ -12,7 +12,9 @@
 import Vue from "vue";
 import { SubmitBar,Checkbox } from "vant";
 Vue.use(SubmitBar).use(Checkbox)
+
 import {mapState} from 'vuex'
+
 export default {
     data(){
         return {

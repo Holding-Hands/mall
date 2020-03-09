@@ -8,7 +8,9 @@
       :border='border'
       :fixed="isFixed"
       :z-index="'999'"
-    ></van-nav-bar>
+    >
+    
+    </van-nav-bar>
   </div>
 </template>
 <script>

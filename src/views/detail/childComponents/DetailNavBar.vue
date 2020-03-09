@@ -11,11 +11,11 @@
         </div>
 
         <div class="features-bottom">
-          <div class="features-bottom-item">
+          <div class="features-bottom-item" @click="clickProfile" >
             <div class="iconfont">&#xe621;</div>
             <p>消息</p>
           </div>
-          <div class="features-bottom-item">
+          <div class="features-bottom-item" @click="clickHome">
             <div class="iconfont">&#xe629;</div>
             <p>首页</p>
           </div>
@@ -63,10 +63,18 @@ export default {
     changeIsShowFeatures() {
       this.isShowFeatures = !this.isShowFeatures;
     },
-    //点击按钮去购物车页面
+    //3.点击按钮去购物车页面
     toCart(){
         this.$router.push('/cart')
-    }
+    },
+    //4.点击去我的页面
+    clickProfile(){
+      this.$router.push('/profile')
+    },
+    //6.点击去首页
+    clickHome(){
+      this.$router.push('/home')
+    },
   }
 };
 </script>

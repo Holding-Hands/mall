@@ -30,7 +30,6 @@ export class BaseInfo {
       this.realPrice = itemInfo.price
       this.lowNowPrice=itemInfo.lowNowPrice //没有￥符号number类型，为了后面计算购物车加个
     }
-  
 }
 //将多个信息整理为商家所需要的信息，采用面向对象方式
   export class BusinessInfo {
