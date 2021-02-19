@@ -11,7 +11,7 @@ const Detail = () =>import('../views/detail/Detail.vue')
 const routes = [
   {
     path:'',
-    direction:'/home'
+    redirect:'/home'
   },
   {
     path: '/home',
@@ -42,7 +42,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })
