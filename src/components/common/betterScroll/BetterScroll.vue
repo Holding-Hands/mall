@@ -39,7 +39,7 @@
         this.$emit('scrollTo',position)
       });
       }
-      
+
       //3.监听上拉加载事件
       this.scroll.on('pullingUp',()=>{
        this.$emit('pullingUp')
@@ -54,8 +54,6 @@
       },
       refresh(){
         this.scroll&&this.scroll.refresh();
-        console.log('refresh调用了');
-        
       },
       saveScrollY(){
         return this.scroll?this.scroll.y:0;

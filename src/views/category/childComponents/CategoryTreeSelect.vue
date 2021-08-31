@@ -7,7 +7,7 @@
           :key="index"
           class="item"
           :class="{active : currentIndex===index}"
-          @click="selectIndex(index)"
+          @click="selectIndex(index), onClick()"
         >{{item.title}}</div>
       </div>
     </BetterScroll>
@@ -31,9 +31,13 @@ export default {
   },
   methods: {
     selectIndex(index) {
+      console.log(index, 'index')
       this.currentIndex = index;
       this.$emit('selectIndex',index)
-    }
+    },
+    onClick() {
+      console.log('2222')
+    },
   },
   components: {
     BetterScroll
@@ -46,7 +50,7 @@ export default {
     position: relative;
     height: 100vh;
     width: 100px;
-    
+
 }
 .better-scroll {
   position: absolute;
